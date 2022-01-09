@@ -8,7 +8,7 @@ cpf = os.environ.get('HE_CPF')
 passw = os.environ.get('HE_CPASSWORD')
 driver = webdriver.Chrome('./chromedriver')
 
-def celesc_login(uc, cpf, passw):
+def login_to_celesc(uc, cpf, passw):
     driver.get('https://agenciaweb.celesc.com.br/AgenciaWeb/autenticar/loginCliente.do')
     driver.find_element(By.XPATH, '//*[@id="fundoPrincipalLogout"]/form/div[2]/input').send_keys(uc)
     driver.find_element(By.XPATH, '//*[@id="CD_CPF"]').send_keys(cpf)
@@ -18,8 +18,8 @@ def celesc_login(uc, cpf, passw):
     valor = driver.find_element(By.XPATH, '/html/body/div/div/div[3]/table[2]/tbody/tr[1]/td/fieldset[2]/table/tbody/tr[2]/td[4]').text
 
 
-def get_csv_consumo(since):
-    celesc_login(uc, cpf, passw)
+def get_consumption_csv(since):
+    login_to_celesc(uc, cpf, passw)
     driver.find_element(By.XPATH, '//*[@id="mn"]/table/tbody/tr[21]/td/a').click()
     mes_inicial = driver.find_element(By.XPATH, '//*[@id="mesInicial"]')
     mes_inicial.clear()
@@ -32,8 +32,8 @@ def get_csv_consumo(since):
     df = pd.read_html('<table>' + table + '</table>')[0]
     df.to_csv('./files/hist_consumo.csv', sep=',')
 
-def get_csv_pagamentos():
-    celesc_login(uc, cpf, passw)
+def get_payments_csv():
+    login_to_celesc(uc, cpf, passw)
     driver.find_element(By.XPATH, '//*[@id="mn"]/table/tbody/tr[22]/td/a').click()
     table = driver.find_element(By.XPATH, '//*[@id="histFat"]').get_attribute('innerHTML')
     driver.close()
@@ -42,5 +42,5 @@ def get_csv_pagamentos():
 
 
 if __name__ == '__main__':
-    get_csv_consumo(2020)
-    get_csv_pagamentos()
+    get_consumption_csv(2020)
+    get_payments_csv()
